@@ -1,0 +1,24 @@
+data_dir: "data"
+raw_papers_path: "data/raw_papers"
+processed_papers_path: "data/processed_papers"
+chroma_db_path: "data/chroma_db"
+bm25_index_path: "data/bm25_index"
+
+embeddings:
+  model_name: "sentence-transformers/all-MiniLM-L6-v2"
+  batch_size: 32
+
+chunking:
+  max_tokens: 400
+  overlap: 50
+
+retrieval:
+  semantic_weight: 0.7
+  initial_k: 20
+  rerank_k: 10
+
+code_review:
+  max_function_lines: 50
+  max_class_lines: 200
+  max_file_lines: 500
+  max_complexity: 10
