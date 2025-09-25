@@ -93,6 +93,21 @@ This repository houses a compact Retrieval-Augmented Generation (RAG) stack tail
    - Health: `curl http://127.0.0.1:8000/health`
 6. **(Optional) Tests** - `pytest tests/test_query_analyzer.py tests/test_domain_expert.py tests/test_orchestrator.py tests/test_api.py`
 
+
+## Containerization (Optional)
+A sample `Dockerfile` is included for interview demos. Build the image and run the API with your Gemini key:
+```bash
+docker build -t financial-ml-assistant .
+docker run --rm -p 8000:8000 -e GEMINI_API_KEY=your_api_key -v $(pwd)/data:/app/data financial-ml-assistant
+```
+*The volume mount keeps indices and processed papers outside the container.*
+
+To (re)index inside the container, execute the ingestion script once:
+```bash
+docker run --rm -e GEMINI_API_KEY=your_api_key -v $(pwd)/data:/app/data financial-ml-assistant python scripts/ingest_papers.py
+```
+Adjust paths for Windows PowerShell (`${PWD}`) as needed.
+
 ## Evaluation Snapshot
 `/evaluate` currently reports (single-paper corpus):
 - Retrieval: recall@10 ~ 0.64, precision@5 ~ 0.17, MRR ~ 0.42

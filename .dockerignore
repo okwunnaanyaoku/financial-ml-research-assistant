@@ -1,0 +1,22 @@
+.git
+.venv/
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+
+# Local data and cache directories
+data/chroma_db/
+data/bm25_index/
+data/processed_papers/
+data/ingestion_stats.json
+
+# Project artifacts not needed in the image
+.claude/
+docs/
+workflows/
+*.log
+
+# Tests and notebooks can be mounted separately if required
+tests/
+notebooks/
