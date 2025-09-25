@@ -20,11 +20,20 @@ This project delivers an end-to-end Retrieval-Augmented Generation (RAG) assista
 5. **Evaluation Loop** (`tests/evaluation/eval_runner.py`)
    - Mini benchmark over a curated golden dataset (3 samples are used for the cached health metrics).
 
+## End-to-End Query Flow
+1. **API ingress** ï¿½ A client sends POST /query with the user question. FastAPI validates the payload against OrchestratorRequest and passes it to the orchestrator agent.
+2. **Query analysis** ï¿½ QueryAnalyzer enriches the request. It first tries Gemini (prompts/query_analyzer/financial_classification.txt) to classify complexity, entities, question type, and financial focus; it falls back to rule-based heuristics when the LLM is unavailable.
+3. **Hybrid retrieval** ï¿½ The orchestrator invokes HybridSearch. The retriever executes parallel searches against ChromaDB (semantic embeddings) and BM25 (lexical). Scores are normalised and fused (semantic_weight from config.yaml), producing a ranked candidate list.
+4. **Expert chunk selection** ï¿½ DomainExpert keeps the top-scoring chunks above the 0.3 hybrid-score threshold (up to three). Each chunk retains section metadata so we can cite the original paper.
+5. **Domain synthesis** ï¿½ Using prompts/domain_expert/content_analysis.txt, Gemini analyses the shortlisted chunks and returns a structured DomainExpertResponse containing key findings, methodology insights, limitations, and citations.
+6. **Final orchestration** ï¿½ The orchestrator feeds the expert analysis, original question, and query metadata into prompts/orchestrator/response_synthesis.txt. Gemini generates the final narrative answer, which is wrapped in an OrchestratorResponse together with provenance (metadata.expert_analysis.sources).
+7. **Response + logging** ï¿½ The API returns the JSON payload to the caller. The evaluation runner optionally logs the interaction for /evaluate so the same pipeline can be scored against the golden dataset.
+
 ## Chunking & Retrieval Engine
 ### Chunking pipeline
 - **PDF extraction**: `PDFExtractor` relies on PyMuPDF (`fitz`) to capture text spans, bounding boxes, and page numbers so downstream components can reason about layout.
 - **Structured section detection**: `PaperParser` walks the PDF outline when it is available. Each heading becomes a logical section id; when outlines are missing, the parser synthesises a single top-level section so chunks still have stable metadata.
-- **Hierarchical chunker**: `HierarchicalChunker` traverses the section tree and emits contiguous chunks that never cross section boundaries. Sentences are grouped until ~400 GPT-4 tokens, then the chunk is closed with a 50-token overlap to preserve context for the retriever. This keeps semantic units together while staying within LLM context limits.
+- **Hierarchical chunker**: `HierarchicalChunker` traverses the section tree and emits contiguous, context-aware chunks that never cross section boundaries. Sentences are grouped until ~400 GPT-4 tokens, then the chunk is closed with a 50-token overlap so adjacent context is preserved for retrieval. This keeps semantic units together while staying within LLM context limits.
 - **Post-processing**: every chunk receives deterministic ids (`chunk_{n}`), the originating section title, hierarchy level, page span, character counts, and token counts. The metadata is stored alongside the text and fuels evaluation, citation rendering, and future audits.
 
 ### Hybrid retrieval
@@ -78,6 +87,7 @@ Use this as a regression guard; higher recall@k, MRR, and factual accuracy indic
 - **Ensure chunk alignment**: run `uv run --python .venv/bin/python python debug_chunk_ids.py` after re-ingestion to confirm every golden `chunk_*` id still exists. Missing ids depress recall and MRR regardless of LLM quality.
 - **Refine chunk boundaries**: if recall is low for section-specific questions, adjust `HierarchicalChunker` settings (`max_tokens`, `overlap`) or enhance outline parsing so critical paragraphs remain in a single chunk.
 - **Tweak score fusion**: experiment with `semantic_weight`, BM25 candidate counts, or additional reranking. Increasing lexical weight often boosts precision@k for numeric-heavy questions; stronger semantic weight can improve coverage.
+- **Add a reranking stage**: pass the fused candidate list through a lexical or cross-encoder reranker (e.g., `sentence-transformers/ms-marco-MiniLM-L-6-v3`). Promoting the most relevant chunk before Gemini sees it typically lifts precision@k and MRR without altering ingestion.
 - **Prompt for explicit answers**: modify `prompts/domain_expert/content_analysis.txt` and `prompts/orchestrator/response_synthesis.txt` to ask the LLM for structured bullet lists with numeric values, improving the odds of matching `golden_answer` strings.
 - **Broaden golden answers**: add alternate phrasings (e.g., `"sixty-seven to eighty-four percent"`) or tolerance ranges when the assistant gives correct but differently formatted responses.
 - **Instrument latency**: if average response time spikes, trim `MAX_CHUNKS_FOR_LLM`, switch to a lighter Gemini model, or cache intermediate embeddings.
@@ -130,13 +140,13 @@ Start the API after ingestion and exporting your key:
 uvicorn src.api.app:app --reload
 ```
 Endpoints:
-- `POST /query` — accepts `{ "query": "..." }` and returns the `OrchestratorResponse` JSON.
-- `POST /evaluate` — runs the mini evaluation (3 samples) to warm cached metrics.
-- `GET /health` — returns service status plus cached metrics (first call triggers evaluation).
+- `POST /query` ï¿½ accepts `{ "query": "..." }` and returns the `OrchestratorResponse` JSON.
+- `POST /evaluate` ï¿½ runs the mini evaluation (3 samples) to warm cached metrics.
+- `GET /health` ï¿½ returns service status plus cached metrics (first call triggers evaluation).
 
 Interact via Swagger UI (`http://127.0.0.1:8000/docs`) or curl:
 ```bash
-curl -X POST http://127.0.0.1:8000/query      -H "Content-Type: application/json"      -d '{"query": "How do LSTM and CNN compare for volatility forecasting?"}'
+curl -X POST http://127.0.0.1:8000/query      -H "Content-Type: application/json"      -d '{"query": "what social media sources were used in this paper?"}'
 ```
 
 ## Querying the Assistant
@@ -231,4 +241,7 @@ prompts/             LLM prompt templates per agent
 
 ## License
 MIT (or insert license details if defined).
+
+
+
 
