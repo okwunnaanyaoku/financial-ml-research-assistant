@@ -28,13 +28,13 @@ This repository houses a compact Retrieval-Augmented Generation (RAG) stack tail
    - Mini benchmark over a curated golden dataset (15 questions; first 3 cached for health checks).
 
 ## End-to-End Query Flow
-1. **API ingress** – client sends `POST /query`; FastAPI validates `OrchestratorRequest`.
-2. **Query analysis** – `QueryAnalyzer` enriches the request via Gemini (with rule-based fallback).
-3. **Hybrid retrieval** – `HybridSearch` gathers semantic and lexical matches, normalises scores, and fuses the ranked list.
-4. **Expert chunk selection** – `DomainExpert` keeps the top chunks above 0.3 and preserves section metadata for citations.
-5. **Domain synthesis** – Gemini processes the shortlisted context using `prompts/domain_expert/content_analysis.txt`.
-6. **Final orchestration** – The orchestrator feeds the analysis, question, and metadata into `prompts/orchestrator/response_synthesis.txt` to produce the user-facing answer.
-7. **Response + logging** – The API returns the `OrchestratorResponse`; the evaluation runner can log the interaction for offline scoring.
+1. **API ingress** - client sends `POST /query`; FastAPI validates `OrchestratorRequest`.
+2. **Query analysis** - `QueryAnalyzer` enriches the request via Gemini (with rule-based fallback).
+3. **Hybrid retrieval** - `HybridSearch` gathers semantic and lexical matches, normalises scores, and fuses the ranked list.
+4. **Expert chunk selection** - `DomainExpert` keeps the top chunks above 0.3 and preserves section metadata for citations.
+5. **Domain synthesis** - Gemini processes the shortlisted context using `prompts/domain_expert/content_analysis.txt`.
+6. **Final orchestration** - The orchestrator feeds the analysis, question, and metadata into `prompts/orchestrator/response_synthesis.txt` to produce the user-facing answer.
+7. **Response + logging** - The API returns the `OrchestratorResponse`; the evaluation runner can log the interaction for offline scoring.
 
 ## Chunking & Retrieval Engine
 ### Chunking pipeline
@@ -61,11 +61,11 @@ This repository houses a compact Retrieval-Augmented Generation (RAG) stack tail
 - Extend `tests/evaluation/golden_dataset.json` as new papers are ingested.
 
 ### Metrics captured
-- **Recall@k / Precision@k** – coverage vs concentration of relevant chunks.
-- **MRR / MAP** – rank-sensitive retrieval quality.
-- **QA factual accuracy** – substring match against `golden_answer` variants.
-- **Average response time** – mean latency per answer.
-- **Overall score** – weighted blend (weights in `config.yaml`).
+- **Recall@k / Precision@k** - coverage vs concentration of relevant chunks.
+- **MRR / MAP** - rank-sensitive retrieval quality.
+- **QA factual accuracy** - substring match against `golden_answer` variants.
+- **Average response time** - mean latency per answer.
+- **Overall score** - weighted blend (weights in `config.yaml`).
 
 ### Improving retrieval & QA metrics
 - Ensure chunk alignment after re-ingestion via `uv run --python .venv/bin/python python scripts/tools/debug_chunk_ids.py`.
@@ -84,14 +84,14 @@ This repository houses a compact Retrieval-Augmented Generation (RAG) stack tail
    uv pip install --upgrade pip
    uv pip install -r requirements.txt
    ```
-2. **Prepare data** – drop PDFs into `data/raw_papers/` and run `python scripts/ingest_papers.py`.
-3. **Configure Gemini** – `export GEMINI_API_KEY=your_api_key`.
-4. **Launch the API** – `uvicorn src.api.app:app --reload`.
+2. **Prepare data** - drop PDFs into `data/raw_papers/` and run `python scripts/ingest_papers.py`.
+3. **Configure Gemini** - `export GEMINI_API_KEY=your_api_key`.
+4. **Launch the API** - `uvicorn src.api.app:app --reload`.
 5. **Interact**
    - Query: `curl -X POST http://127.0.0.1:8000/query -H "Content-Type: application/json" -d '{"query": "..."}'`
    - Evaluate: `curl -X POST http://127.0.0.1:8000/evaluate`
    - Health: `curl http://127.0.0.1:8000/health`
-6. **(Optional) Tests** – `pytest tests/test_query_analyzer.py tests/test_domain_expert.py tests/test_orchestrator.py tests/test_api.py`
+6. **(Optional) Tests** - `pytest tests/test_query_analyzer.py tests/test_domain_expert.py tests/test_orchestrator.py tests/test_api.py`
 
 ## Evaluation Snapshot
 `/evaluate` currently reports (single-paper corpus):
