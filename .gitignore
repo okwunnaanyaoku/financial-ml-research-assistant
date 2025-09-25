@@ -1,0 +1,35 @@
+# Python caches
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+.env/
+
+# IDE settings
+.vscode/
+.idea/
+
+# Test & coverage artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local data outputs
+*.sqlite3
+*.bin
+*.pkl
+*.jsonl
+logs/
+
+# Ingestion/index artifacts
+data/chroma_db/
+data/bm25_index/
+data/processed_papers/
+data/ingestion_stats.json
+
+# Misc
+.DS_Store
+tests/evaluation/evaluation_results_*.json

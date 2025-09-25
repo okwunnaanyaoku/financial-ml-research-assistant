@@ -22,3 +22,26 @@ code_review:
   max_class_lines: 200
   max_file_lines: 500
   max_complexity: 10
+
+confidence_thresholds:
+  high: 0.7
+  medium: 0.4
+  scaling_factor: 1.5
+
+evaluation_weights:
+  recall_weight: 0.4
+  mrr_weight: 0.3
+  precision_weight: 0.3
+  retrieval_vs_qa: 0.6
+
+api:
+  base_url: "http://localhost:8000"
+  collection_name: "financial_ml_papers"
+
+llm:
+  provider: "gemini"
+  model: "models/gemini-2.5-flash-lite"
+  api_key_env: "GEMINI_API_KEY"
+  timeout: 30
+  max_retries: 3
+  temperature: 0.1

@@ -2,10 +2,11 @@ from rank_bm25 import BM25Okapi
 import pickle
 from pathlib import Path
 from typing import List, Dict
+from config import config
 
 class BM25Indexer:
-    def __init__(self, index_path="data/bm25_index"):
-        self.index_path = Path(index_path)
+    def __init__(self, index_path=None):
+        self.index_path = Path(index_path or config.bm25_index_path)
         self.index_path.mkdir(parents=True, exist_ok=True)
         self.bm25 = None
         self.chunk_ids = []

@@ -1,0 +1,137 @@
+[
+  {
+    "id": "q1",
+    "question": "What neural network architectures were compared in the cryptocurrency study?",
+    "golden_answer": ["MLP", "CNN", "LSTM", "ALSTM"],
+    "relevant_chunk_ids": ["chunk_0", "chunk_2", "chunk_3", "chunk_58"],
+    "expected_sections": ["1 Introduction", "2.1 Technical Indicators", "6 Conclusions"],
+    "difficulty": "factual_easy",
+    "category": "models"
+  },
+  {
+    "id": "q2",
+    "question": "What cryptocurrencies were analyzed in the study?",
+    "golden_answer": ["Bitcoin", "Ethereum"],
+    "relevant_chunk_ids": ["chunk_0", "chunk_1", "chunk_4", "chunk_5"],
+    "expected_sections": ["1 Introduction", "2.1 Technical Indicators"],
+    "difficulty": "factual_easy",
+    "category": "data"
+  },
+  {
+    "id": "q3",
+    "question": "What time period was used for the analysis?",
+    "golden_answer": ["2017-2020", "2017/01/01 to 2021/01/01"],
+    "relevant_chunk_ids": ["chunk_0", "chunk_4"],
+    "expected_sections": ["1 Introduction", "2.1 Technical Indicators"],
+    "difficulty": "factual_easy",
+    "category": "data"
+  },
+  {
+    "id": "q4",
+    "question": "What three classes of features were used as input?",
+    "golden_answer": ["technical indicators", "trading indicators", "social media indicators"],
+    "relevant_chunk_ids": ["chunk_0", "chunk_3"],
+    "expected_sections": ["1 Introduction", "2.1 Technical Indicators"],
+    "difficulty": "factual_medium",
+    "category": "features"
+  },
+  {
+    "id": "q5",
+    "question": "Which model performed better: restricted or unrestricted?",
+    "golden_answer": ["unrestricted model"],
+    "relevant_chunk_ids": ["chunk_0", "chunk_1", "chunk_3"],
+    "expected_sections": ["1 Introduction", "2.1 Technical Indicators"],
+    "difficulty": "comparative_easy",
+    "category": "performance"
+  },
+  {
+    "id": "q6",
+    "question": "What accuracy range did the restricted model achieve at hourly frequency?",
+    "golden_answer": ["51-55%"],
+    "relevant_chunk_ids": ["chunk_3"],
+    "expected_sections": ["2.1 Technical Indicators"],
+    "difficulty": "factual_medium",
+    "category": "performance"
+  },
+  {
+    "id": "q7",
+    "question": "What accuracy range did the unrestricted model achieve at hourly frequency?",
+    "golden_answer": ["67-84%"],
+    "relevant_chunk_ids": ["chunk_3"],
+    "expected_sections": ["2.1 Technical Indicators"],
+    "difficulty": "factual_medium",
+    "category": "performance"
+  },
+  {
+    "id": "q8",
+    "question": "What technical indicators are mentioned in the study?",
+    "golden_answer": ["open", "close", "high", "low", "volume"],
+    "relevant_chunk_ids": ["chunk_4"],
+    "expected_sections": ["2.1 Technical Indicators"],
+    "difficulty": "factual_medium",
+    "category": "features"
+  },
+  {
+    "id": "q9",
+    "question": "How many hourly observations were used in the analysis?",
+    "golden_answer": ["35638"],
+    "relevant_chunk_ids": ["chunk_4"],
+    "expected_sections": ["2.1 Technical Indicators"],
+    "difficulty": "factual_easy",
+    "category": "data"
+  },
+  {
+    "id": "q10",
+    "question": "What is the definition of Simple Moving Average (SMA)?",
+    "golden_answer": ["arithmetic average of the cryptocurrency closing price over some period"],
+    "relevant_chunk_ids": ["chunk_6"],
+    "expected_sections": ["2.1 Technical Indicators"],
+    "difficulty": "factual_medium",
+    "category": "definitions"
+  },
+  {
+    "id": "q11",
+    "question": "What social media platforms were used for indicators?",
+    "golden_answer": ["Github", "Reddit"],
+    "relevant_chunk_ids": ["chunk_2", "chunk_3"],
+    "expected_sections": ["2.1 Technical Indicators", "2.2 Social Media Indicators"],
+    "difficulty": "factual_easy",
+    "category": "data"
+  },
+  {
+    "id": "q12",
+    "question": "What type of prediction problem was used: regression or classification?",
+    "golden_answer": ["classification", "binary classification"],
+    "relevant_chunk_ids": ["chunk_2"],
+    "expected_sections": ["2.1 Technical Indicators"],
+    "difficulty": "factual_easy",
+    "category": "methodology"
+  },
+  {
+    "id": "q13",
+    "question": "What were the two classes in the classification problem?",
+    "golden_answer": ["upward movements", "downward movements"],
+    "relevant_chunk_ids": ["chunk_2"],
+    "expected_sections": ["2.1 Technical Indicators"],
+    "difficulty": "factual_easy",
+    "category": "methodology"
+  },
+  {
+    "id": "q14",
+    "question": "What data exchange was used for cryptocurrency data?",
+    "golden_answer": ["Bitfinex.com"],
+    "relevant_chunk_ids": ["chunk_4"],
+    "expected_sections": ["2.1 Technical Indicators"],
+    "difficulty": "factual_easy",
+    "category": "data"
+  },
+  {
+    "id": "q15",
+    "question": "How many trading indicators were used in the study?",
+    "golden_answer": ["36"],
+    "relevant_chunk_ids": ["chunk_5"],
+    "expected_sections": ["2.1 Technical Indicators"],
+    "difficulty": "factual_easy",
+    "category": "features"
+  }
+]

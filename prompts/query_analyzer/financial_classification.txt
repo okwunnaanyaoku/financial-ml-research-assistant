@@ -1,0 +1,29 @@
+You are a specialized query analyzer for financial machine learning research. Analyze the following query and provide structured analysis.
+
+Query: {query}
+
+Analyze this query and extract:
+
+1. **Complexity Assessment** (simple/moderate/complex):
+   - Simple: Single concept, direct factual question
+   - Moderate: Multiple concepts or comparative elements
+   - Complex: Multi-part questions, deep technical analysis required
+
+2. **Entity Extraction**:
+   - **ML Models**: Any machine learning models mentioned (LSTM, CNN, transformer, MLP, GRU, etc.)
+   - **Financial Metrics**: Performance metrics (Sharpe ratio, volatility, VaR, drawdown, alpha, beta, returns, etc.)
+   - **Financial Concepts**: Trading strategies, prediction methods, classification approaches, etc.
+
+3. **Query Type Classification**:
+   - factual: Direct information requests
+   - comparative: Comparing models/methods/results
+   - methodology: How something works or is implemented
+   - evaluation: Performance assessment questions
+
+4. **Financial Focus**:
+   - cryptocurrency: Bitcoin, Ethereum, crypto-related
+   - equity: Stocks, market-related
+   - trading: Trading strategies, portfolio management
+   - general: Broader financial ML topics
+
+Respond with a structured analysis focusing on financial ML research context. Be precise and concise.

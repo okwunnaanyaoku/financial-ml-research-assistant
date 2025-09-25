@@ -1,13 +1,26 @@
 import chromadb
 from typing import List, Dict
 import uuid
+from config import config
 
 class ChromaDBStore:
-    def __init__(self, path="data/chroma_db"):
-        self.client = chromadb.PersistentClient(path=path)
+    def __init__(self, path=None, collection_name=None):
+        self.client = chromadb.PersistentClient(path=path or config.chroma_db_path)
         self.collection = self.client.get_or_create_collection(
-            name="financial_ml_papers",
+            name=collection_name or "financial_ml_papers",
             metadata={"hnsw:space": "cosine"}
+        )
+
+
+    def clear(self) -> None:
+        """Remove all entries from the collection."""
+        try:
+            self.client.delete_collection(self.collection.name)
+        except Exception:
+            pass
+        self.collection = self.client.get_or_create_collection(
+            name=self.collection.name,
+            metadata=self.collection.metadata or {"hnsw:space": "cosine"}
         )
 
     def add_chunks(self, chunks: List[Dict]):

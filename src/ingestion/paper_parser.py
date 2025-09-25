@@ -1,9 +1,12 @@
-import pymupdf
+try:
+    import fitz
+except ImportError:
+    import pymupdf as fitz
 from typing import List, Dict
 
 class PaperParser:
     def parse_structure(self, pdf_path: str) -> Dict:
-        doc = pymupdf.open(pdf_path)
+        doc = fitz.open(pdf_path)
         outline = doc.get_toc()
 
         if not outline:

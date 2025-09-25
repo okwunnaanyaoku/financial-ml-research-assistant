@@ -5,20 +5,21 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
+from config import config
 from indexing.vector_store import ChromaDBStore
 from indexing.bm25_indexer import BM25Indexer
 
 class HybridSearch:
-    def __init__(self, semantic_weight=0.7):
-        self.semantic_weight = semantic_weight
-        self.keyword_weight = 1 - semantic_weight
+    def __init__(self, semantic_weight=None):
+        self.semantic_weight = semantic_weight or config.semantic_weight
+        self.keyword_weight = 1 - self.semantic_weight
         self.vector_store = ChromaDBStore()
         self.bm25_indexer = BM25Indexer()
         self.chunks_cache = self._load_chunks()
 
     def _load_chunks(self) -> Dict[str, Dict]:
         chunks = {}
-        for json_file in Path("data/processed_papers").glob("*.json"):
+        for json_file in Path(config.processed_papers_path).glob("*.json"):
             with open(json_file, 'r') as f:
                 data = json.load(f)
                 for chunk in data['chunks']:

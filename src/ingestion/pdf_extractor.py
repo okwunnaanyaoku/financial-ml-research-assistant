@@ -1,9 +1,12 @@
-import pymupdf
+try:
+    import fitz
+except ImportError:
+    import pymupdf as fitz
 from typing import Dict
 
 class PDFExtractor:
     def extract_from_pdf(self, pdf_path: str) -> Dict:
-        doc = pymupdf.open(pdf_path)
+        doc = fitz.open(pdf_path)
         pages = []
 
         for page_num, page in enumerate(doc):

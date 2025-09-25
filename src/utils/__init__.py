@@ -1,7 +1,5 @@
-"""
-Utility modules for the Financial ML Research Assistant.
-"""
+"""Utility modules for the Financial ML Research Assistant."""
 
-from .prompt_loader import PromptLoader, load_prompt
+from .prompt_loader import load_prompt
 
-__all__ = ['PromptLoader', 'load_prompt']
+__all__ = ["load_prompt"]
