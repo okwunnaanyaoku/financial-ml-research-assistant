@@ -71,6 +71,7 @@ This repository houses a compact Retrieval-Augmented Generation (RAG) stack tail
 - Ensure chunk alignment after re-ingestion via `uv run --python .venv/bin/python python scripts/tools/debug_chunk_ids.py`.
 - Tweak `HierarchicalChunker` settings when section-specific recall drops.
 - Adjust `semantic_weight` or add reranking (e.g., `sentence-transformers/ms-marco-MiniLM-L-6-v3`).
+- Add LLM tracing (OpenTelemetry or LangSmith) to inspect raw prompts/responses and diagnose hallucinations quickly.
 - Tune prompts for explicit, citation-rich answers and broaden `golden_answer` variants.
 - Monitor latency: reduce `MAX_CHUNKS_FOR_LLM` or switch to lighter models if responses slow down.
 - Grow the benchmark with new questions per paper to expose blind spots.
