@@ -202,14 +202,39 @@ curl -X POST http://127.0.0.1:8000/query      -H "Content-Type: application/json
    ```
    This mirrors the curl call and is useful for notebook-based workflows or regression tests.
 
-## Runbook
-1. `python scripts/ingest_papers.py`
-2. `pytest tests/test_query_analyzer.py tests/test_domain_expert.py tests/test_orchestrator.py tests/test_api.py`
-3. `export GEMINI_API_KEY=...`
-4. `uvicorn src.api.app:app --reload`
-5. `curl -X POST http://127.0.0.1:8000/query ...`
-6. `curl -X POST http://127.0.0.1:8000/evaluate` (optional but recommended to warm `/health`).
-7. `curl http://127.0.0.1:8000/health`
+## How to Use
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/okwunnaanyaoku/financial-ml-research-assistant.git
+   cd financial-ml-research-assistant
+   ```
+2. **Set up the environment** (uv recommended)
+   ```bash
+   uv venv
+   source .venv/bin/activate
+   uv pip install --upgrade pip
+   uv pip install -r requirements.txt
+   ```
+3. **Ingest papers** (place PDFs in `data/raw_papers/` first)
+   ```bash
+   python scripts/ingest_papers.py
+   ```
+4. **Export your Gemini API key**
+   ```bash
+   export GEMINI_API_KEY=your_api_key
+   ```
+5. **Run the FastAPI service**
+   ```bash
+   uvicorn src.api.app:app --reload
+   ```
+6. **Interact with the assistant**
+   - Query: `curl -X POST http://127.0.0.1:8000/query -H "Content-Type: application/json" -d '{"query": "..."}'`
+   - Evaluate: `curl -X POST http://127.0.0.1:8000/evaluate`
+   - Health: `curl http://127.0.0.1:8000/health`
+7. **(Optional) Run tests** to verify the stack
+   ```bash
+   pytest tests/test_query_analyzer.py tests/test_domain_expert.py tests/test_orchestrator.py tests/test_api.py
+   ```
 
 ## Project Structure
 ```
@@ -241,6 +266,8 @@ prompts/             LLM prompt templates per agent
 
 ## License
 MIT (or insert license details if defined).
+
+
 
 
 
