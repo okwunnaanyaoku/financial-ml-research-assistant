@@ -33,3 +33,9 @@ data/ingestion_stats.json
 # Misc
 .DS_Store
 tests/evaluation/evaluation_results_*.json
+
+# Local documentation and assistant artifacts
+.claude/
+CLAUDE.md
+agent.md
+docs/
