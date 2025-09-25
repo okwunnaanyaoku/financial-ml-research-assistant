@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from typing import Dict, List
 import time
+import random
 
 sys.path.append(str(Path(__file__).parent.parent.parent / 'src'))
 from config import config
@@ -14,8 +15,12 @@ from agents.models import OrchestratorRequest
 from retrieval.hybrid_search import HybridSearch
 from ir_metrics import calculate_metrics, aggregate_metrics
 
+
 class EvaluationRunner:
     def __init__(self):
+        self.seed = 42
+        random.seed(self.seed)
+
         self.orchestrator = Orchestrator()
         self.hybrid_search = HybridSearch()
         self.golden_dataset = self._load_dataset()
@@ -37,17 +42,30 @@ class EvaluationRunner:
 
     def evaluate_qa_quality(self) -> Dict[str, float]:
         correct = 0
-        times = []
+        times: List[float] = []
         for item in self.golden_dataset:
             start = time.time()
             result = self.orchestrator.process(OrchestratorRequest(query=item['question']))
-            times.append(time.time() - start)
+            elapsed = time.time() - start
+            times.append(elapsed)
             if self._answer_matches(result.content, item['golden_answer']):
                 correct += 1
+
+        count = len(self.golden_dataset) or 1
+        factual_accuracy = correct / count
+        avg_time = sum(times) / count if times else 0.0
+        sorted_times = sorted(times)
+        if sorted_times:
+            index = max(0, int(len(sorted_times) * 0.95) - 1)
+            p95 = sorted_times[index]
+        else:
+            p95 = 0.0
+
         return {
-            'factual_accuracy': correct / len(self.golden_dataset),
-            'avg_response_time': sum(times) / len(times),
-            'correct_answers': correct
+            'factual_accuracy': factual_accuracy,
+            'avg_response_time': avg_time,
+            'p95_response_time': p95,
+            'correct_answers': correct,
         }
 
     def _answer_matches(self, response: str, golden_answers: List) -> bool:
@@ -62,9 +80,10 @@ class EvaluationRunner:
     def _build_results(self, ir_metrics: Dict, qa_metrics: Dict) -> Dict:
         return {
             'dataset_size': len(self.golden_dataset),
+            'seed': self.seed,
             'retrieval_metrics': ir_metrics,
             'qa_metrics': qa_metrics,
-            'overall_score': self._overall_score(ir_metrics, qa_metrics)
+            'overall_score': self._overall_score(ir_metrics, qa_metrics),
         }
 
     def _overall_score(self, ir_metrics: Dict, qa_metrics: Dict) -> float:
@@ -91,13 +110,24 @@ class EvaluationRunner:
             'overall_score': self.cached_metrics.get('overall_score', 0),
             'recall_at_10': self.cached_metrics.get('retrieval_metrics', {}).get('recall_at_10', 0),
             'factual_accuracy': self.cached_metrics.get('qa_metrics', {}).get('factual_accuracy', 0),
-            'avg_response_time': self.cached_metrics.get('qa_metrics', {}).get('avg_response_time', 0)
+            'avg_response_time': self.cached_metrics.get('qa_metrics', {}).get('avg_response_time', 0),
         }
+
 
 def main():
     runner = EvaluationRunner()
     results = runner.run_full_evaluation()
 
+    recall5 = results['retrieval_metrics'].get('recall_at_5', 0.0)
+    factual = results['qa_metrics'].get('factual_accuracy', 0.0) * 100
+    p95 = results['qa_metrics'].get('p95_response_time', 0.0)
+
+    print(f"Seed: {results['seed']}")
+    print(f"Recall@5: {recall5:.3f}")
+    print(f"Factual match: {factual:.1f}%")
+    print(f"P95 latency: {p95:.3f}s")
+
+    print("-- Detailed Metrics --")
     print(f"Dataset: {results['dataset_size']} questions")
     print(f"Overall Score: {results['overall_score']}/100")
     print("Retrieval Metrics:")
@@ -105,9 +135,13 @@ def main():
         print(f"  {metric}: {value:.3f}")
     print("QA Metrics:")
     for metric, value in results['qa_metrics'].items():
-        print(f"  {metric}: {value:.3f}")
+        if isinstance(value, float):
+            print(f"  {metric}: {value:.3f}")
+        else:
+            print(f"  {metric}: {value}")
 
     return results
+
 
 if __name__ == "__main__":
     main()
